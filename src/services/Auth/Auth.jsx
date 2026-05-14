@@ -62,3 +62,33 @@ export const RegisterUser = async (token, payload) => {
     };
   }
 };
+
+export const FetchBorders = async (token, hostel_id) => {
+  try {
+    const res = await fetch(
+      getAPI(urls.auth.fetchBorders(hostel_id)),
+      {},
+      token
+    );
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      return {
+        success: false,
+        status: res.status,
+        error: data.message || data.error || "Fetching failed",
+      };
+    }
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: err.message || "Network error",
+    };
+  }
+};

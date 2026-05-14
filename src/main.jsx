@@ -12,6 +12,9 @@ import AuthWrapper from "./components/Auth/AuthWrapper";
 import AdminLayout from "./layouts/admin_layout";
 import ManagePayments from "./pages/ManagePayments";
 import PaymentList from "./pages/PaymentLists";
+import DefaultersPage from "./pages/Defaulters";
+import { Toaster } from "sonner";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const routes = createBrowserRouter([
   // 🌍 Public routes
@@ -41,8 +44,10 @@ const routes = createBrowserRouter([
         path: "/admin",
         element: <AdminLayout />,
         children: [
+          {path: "dashboard", element: <AdminDashboard />},
           {path: "payments", element: <ManagePayments />},
-          {path: "payments/:payment_type", element: <PaymentList />}
+          {path: "payments/list/:payment_type", element: <PaymentList />},
+          {path: "payments/defaulters", element: <DefaultersPage />},
         ],
       }
     ],
@@ -50,9 +55,16 @@ const routes = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")).render(
+  <>
+  <Toaster
+        position="top-right"
+        richColors
+        closeButton
+      />
   <ClerkProvider>
     <UserProvider>
       <RouterProvider router={routes} />,
     </UserProvider>
-  </ClerkProvider>,
+  </ClerkProvider>
+  </>
 );

@@ -30,8 +30,7 @@ const Payment = () => {
       alert(res.error); // or toast
       return;
     }
-    setPayments(res.data)
-  }
+  setPayments(Array.isArray(res.data) ? res.data : [])  }
 
   const handleAddPayment = async (paymentData) => {
     setIsSubmitting(true)
@@ -70,8 +69,8 @@ const Payment = () => {
     }
   }
 
-  const handleView = (payment) => {
-    setViewingPayment(payment)
+  const handleView = (payment_id) => {
+    setViewingPayment(payment_id)
     setIsDetailsOpen(true)
   }
 
@@ -178,8 +177,7 @@ useEffect(() => {
         maxWidth="max-w-lg"
       >
         <PaymentDetails 
-          payment={viewingPayment} 
-          onClose={closeDetails}
+          payment_id={viewingPayment} 
         />
       </Modal>
     </div>

@@ -10,7 +10,8 @@ import {
   Receipt,
   Calendar,
   CreditCard,
-  IndianRupee
+  IndianRupee,
+  Flag
 } from 'lucide-react'
 
 const getStatusConfig = (status) => {
@@ -32,6 +33,12 @@ const getStatusConfig = (status) => {
         color: 'text-red-600 bg-red-50 border-red-200',
         icon: XCircle,
         label: 'Rejected'
+      }
+    case 'flagged':
+      return {
+        color: 'text-orange-600 bg-orange-50 border-orange-200',
+        icon: Flag,
+        label: 'Flagged'
       }
     default:
       return {
@@ -65,7 +72,7 @@ const PaymentHistory = ({ payments, onView, onEdit, onDelete }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {payments.map((payment, index) => {
+              {payments?.map((payment, index) => {
                 const statusConfig = getStatusConfig(payment.verification_status)
                 const StatusIcon = statusConfig.icon
                 
@@ -107,14 +114,14 @@ const PaymentHistory = ({ payments, onView, onEdit, onDelete }) => {
                     <td className="px-4 py-4">
                       <div className="flex items-center justify-end gap-1">
                         <button
-                          onClick={() => onView(payment)}
+                          onClick={() => onView(payment.receipt_id)}
                           className="p-2 rounded-lg hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-all"
                           title="View Details"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                         
-                        {payment.verification_status === 'pending' && (
+                        {(payment.verification_status === 'pending' || payment.verification_status === 'flagged') && (
                           <button
                             onClick={() => onEdit(payment)}
                             className="p-2 rounded-lg hover:bg-amber-50 text-slate-400 hover:text-amber-600 transition-all"
@@ -198,7 +205,7 @@ const PaymentHistory = ({ payments, onView, onEdit, onDelete }) => {
               {/* Actions */}
               <div className="flex gap-2 pt-1">
                 <button
-                  onClick={() => onView(payment)}
+                  onClick={() => onView(payment.receipt_id)}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-indigo-50 text-indigo-700 text-xs font-semibold hover:bg-indigo-100 transition-colors"
                 >
                   <Eye className="w-3.5 h-3.5" />
