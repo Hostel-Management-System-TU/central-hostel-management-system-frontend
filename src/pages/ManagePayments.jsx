@@ -29,6 +29,7 @@ import { useUser } from "../context/user_context";
 import { FetchAdminPaymentAnalytics } from "../services/Payment/Payment";
 import Verify from "../components/payment/Verify";
 import { toast } from "sonner";
+import ListLoader from "../components/loaders/ListLoader";
 
 const monthlyData = [
   { month: "Jan", verified: 45, pending: 12, rejected: 3 },
@@ -59,6 +60,7 @@ const ManagePayments = () => {
   const [isBankModalOpen, setIsBankModalOpen] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifyModalOpen, setVerifyModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const [totals, setTotals] = useState({
     transactions: 0,
     amount: 0,
@@ -79,6 +81,7 @@ const ManagePayments = () => {
   const [categorizedStats, setCategorizedStats] = useState();
 
 const fetchAnalytics = async () => {
+  setIsLoading(true)
   if (!user_details?.hostel_id) return;
 
   const token = await getToken();
@@ -89,9 +92,11 @@ const fetchAnalytics = async () => {
   );
 
   if (!res.success) {
+    setIsLoading(false)
     alert(res.error);
     return;
   }
+  setIsLoading(false)
 
   setVerificationStats({
     approved: res.data.approved_count,
@@ -178,6 +183,12 @@ const handleVerifyPayments = async (data) => {
     setIsVerifying(false);
     toast.success("Payment verification process completed successfully!");
   };
+
+  if(isLoading){
+    return (
+      <ListLoader comment={"Loading Page..."} />
+    )
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300 max-w-[1600px] mx-auto">

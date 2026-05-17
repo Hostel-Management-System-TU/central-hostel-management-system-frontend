@@ -21,6 +21,7 @@ import Modal from "../components/modal/Modal";
 import { toast } from "sonner";
 import { FetchReportsList, UpdateStatus } from "../services/Report/Report";
 import { getR2URL } from "../services/ApiUrls";
+import ListLoader from "../components/loaders/ListLoader";
 
 const REPORT_TYPE_MAP = {
     1: "Electricity",
@@ -269,9 +270,7 @@ const ManageReports = () => {
             {/* ═══════ REPORT CARDS ═══════ */}
             <div className="space-y-4">
                 {isLoading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <div className="w-8 h-8 border-3 border-rose-200 border-t-rose-600 rounded-full animate-spin" />
-                    </div>
+                    <ListLoader comment={"Loading Reports..."} />
                 ) : filteredReports.length === 0 ? (
                     <div className="bg-white rounded-2xl border border-slate-200 p-12 shadow-sm text-center">
                         <div className="flex flex-col items-center gap-3">

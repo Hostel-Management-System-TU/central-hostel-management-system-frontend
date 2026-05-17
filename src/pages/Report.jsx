@@ -17,6 +17,7 @@ const Report = () => {
   const [reports, setReports] = useState([])
   const [viewingReport, setViewingReport] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Stats
   const totalReports = reports?.length || 0

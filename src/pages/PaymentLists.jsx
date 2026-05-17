@@ -31,6 +31,8 @@ import Payment from "./Payment";
 import PaymentDetails from "../components/payment/PaymentDetails";
 import { ChangePaymentStatus } from "../services/Verification/Verification";
 import { toast } from "sonner";
+import ListLoader from "../components/loaders/ListLoader";
+import ListNotFound from "../components/NoResults/ListNotFound";
 
 // ─── API Service (replace with your actual import) ───
 // import { FetchPaymentList } from "../services/Payment/Payment";
@@ -588,15 +590,9 @@ const PaymentList = () => {
         {/* Mobile Cards */}
         <div className="md:hidden divide-y divide-slate-100">
           {loading ? (
-            <div className="p-8 text-center">
-              <RefreshCw className="w-6 h-6 text-slate-300 animate-spin mx-auto mb-2" />
-              <p className="text-sm text-slate-500">Loading payments...</p>
-            </div>
+            <ListLoader comment={"Loading Payments..."} />
           ) : paginatedPayments.length === 0 ? (
-            <div className="p-8 text-center">
-              <Search className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-              <p className="text-sm text-slate-500">No payments found</p>
-            </div>
+            <ListNotFound comment={"No payments found"} />
           ) : (
             paginatedPayments.map((payment, idx) => {
               const status = getStatusConfig(payment.verification_status);

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@clerk/react";
 import { FetchDefaulters } from "../services/Payment/Payment";
+import ListLoader from "../components/loaders/ListLoader";
 
 
 
@@ -363,9 +364,7 @@ export default function DefaultersPage() {
 
           {/* ── Loading (non-error) ── */}
           {loading && !error && (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
-            </div>
+            <ListLoader comment={"Loading Defaulters..."} />
           )}
 
           {/* ── Mobile Cards ── */}
