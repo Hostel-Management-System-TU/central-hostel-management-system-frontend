@@ -15,6 +15,7 @@ import PaymentList from "./pages/PaymentLists";
 import DefaultersPage from "./pages/Defaulters";
 import { Toaster } from "sonner";
 import AdminDashboard from "./pages/AdminDashboard";
+import ManageReports from "./pages/ManageReports";
 
 const routes = createBrowserRouter([
   // 🌍 Public routes
@@ -48,6 +49,7 @@ const routes = createBrowserRouter([
           {path: "payments", element: <ManagePayments />},
           {path: "payments/list/:payment_type", element: <PaymentList />},
           {path: "payments/defaulters", element: <DefaultersPage />},
+          {path: "reports", element: <ManageReports />}
         ],
       }
     ],
