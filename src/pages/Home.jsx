@@ -141,8 +141,13 @@ const Home = () => {
       const token = await getToken();
 
       const res = await FetchDashboard(token);
-      setPayments(res.data.trending_payments);
-      setReports(res.data.trending_reports);
+      if (res.success) {
+        setPayments(Array.isArray(res.data) ? res.data.trending_payments : []);
+        setReports(Array.isArray(res.data) ? res.data.trending_reports : []);
+      } else {
+        setPayments([]); // fallback
+        setReports([])
+      }
       setDashboardDetails({
         total_paid: res.data.total_paid,
         total_payments: res.data.total_payments,
