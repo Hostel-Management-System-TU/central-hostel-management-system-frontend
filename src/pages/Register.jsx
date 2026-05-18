@@ -15,20 +15,8 @@ import {
 import { useAuth, useUser } from "@clerk/react";
 import { RegisterUser } from "../services/Auth/Auth";
 import { useNavigate } from "react-router";
-
-const hostels = [
-  { value: "", label: "Select your hostel", disabled: true },
-  { value: "1", label: "Kanchenjunga Men's Hostel" },
-  { value: "2", label: "Nilachal Hostel" },
-  { value: "3", label: "Siang Hostel" },
-  { value: "4", label: "Subansiri Hostel" },
-  { value: "5", label: "Kameng Hostel" },
-  { value: "6", label: "Barak Hostel" },
-  { value: "7", label: "Umiam Hostel" },
-  { value: "8", label: "Dihing Hostel" },
-  { value: "9", label: "Kapili Hostel" },
-  { value: "10", label: "Manas Hostel" },
-];
+import { FetchHostels } from "../services/References/Reference";
+import { toast } from "sonner";
 
 const Register = () => {
   const { user } = useUser();
@@ -56,6 +44,7 @@ const Register = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [hostels, setHostels] = useState([])
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -63,6 +52,14 @@ const Register = () => {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
+
+  const fetchHostels = async () => {
+    const res = await FetchHostels()
+    if (!res.success) {
+      toast.error("Failed to fetch Hostels")
+    }
+    setHostels(res.data)
+  }
 
   const validate = () => {
     const newErrors = {};
@@ -140,6 +137,10 @@ const Register = () => {
         : "border-slate-200 hover:border-slate-300"
     }
   `;
+
+  useEffect(()=> {
+    fetchHostels()
+  },[])
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-slate-50">
@@ -354,13 +355,18 @@ const Register = () => {
                           }
                         `}
                       >
+                          <option
+                            value={0}
+                            disabled={true}
+                          >
+                            {"Select Hostel"}
+                          </option>
                         {hostels.map((h) => (
                           <option
-                            key={h.value}
-                            value={h.value}
-                            disabled={h.disabled}
+                            key={h.hostel_id}
+                            value={h.hostel_id}
                           >
-                            {h.label}
+                            {h.hostel_name}
                           </option>
                         ))}
                       </select>

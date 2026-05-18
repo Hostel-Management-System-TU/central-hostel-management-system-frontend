@@ -1,8 +1,10 @@
 // components/navbar/Navbar.jsx
 import React, { useState } from 'react'
 import { Menu, X, Building2, Shield } from 'lucide-react'
+import {useUser} from '../../context/user_context'
 
 const Navbar = ({ onMenuClick, isOpen }) => {
+  const {user_details} = useUser()
   return (
     <nav className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
       <div className="flex items-center justify-between px-4 py-3">
@@ -30,7 +32,7 @@ const Navbar = ({ onMenuClick, isOpen }) => {
               CHMS
             </span>
             <span className="text-[10px] font-medium text-slate-400 leading-tight tracking-wider uppercase">
-              KMH
+              {user_details.hostel_abbvr}
             </span>
           </div>
         </div>

@@ -4,10 +4,16 @@ export const baseApi = "https://chms78-chms-api.hf.space/api/v1"
 export const R2DevURL = "https://pub-f2cb6691fe21423a9c423ad220580d86.r2.dev/"
 
 export const urls = {
+    reference: {
+        hostels: '/hostels'
+    },
     auth: {
         register: '/auth/register',
         profile: '/auth/me',
         fetchBorders: (hostel_id) => `/auth/borders/${hostel_id}`
+    },
+    dashboard: {
+        user_dashboard: '/dashboard'
     },
     payment: {
         addPayment: '/payment',

@@ -24,7 +24,7 @@ const navItems = [
   { path: "/dashboard", label: "Home", icon: Home },
   { path: "/payment", label: "Payments", icon: Receipt },
   { path: "/report", label: "Reports", icon: FileText },
-  { path: "/settings", label: "Settings", icon: Settings },
+  // { path: "/settings", label: "Settings", icon: Settings },
 ];
 
 const UserSidebar = ({ isMobileOpen, onClose }) => {
@@ -81,7 +81,7 @@ const UserSidebar = ({ isMobileOpen, onClose }) => {
             <div className="mt-4 flex items-center gap-2">
               <div className="h-px flex-1 bg-white/20" />
               <span className="text-white/60 text-xs font-semibold tracking-wider uppercase">
-                Hostel {user_details.HostelAbvr}
+                Hostel {user_details.hostel_abbvr}
               </span>
               <div className="h-px flex-1 bg-white/20" />
             </div>

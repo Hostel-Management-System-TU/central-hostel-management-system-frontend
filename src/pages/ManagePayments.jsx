@@ -29,7 +29,7 @@ import { useUser } from "../context/user_context";
 import { FetchAdminPaymentAnalytics } from "../services/Payment/Payment";
 import Verify from "../components/payment/Verify";
 import { toast } from "sonner";
-import ListLoader from "../components/loaders/ListLoader";
+import ManagePaymentsSkeleton from "../components/loaders/ManagePaymentsSkeleton"
 
 const monthlyData = [
   { month: "Jan", verified: 45, pending: 12, rejected: 3 },
@@ -184,11 +184,9 @@ const handleVerifyPayments = async (data) => {
     toast.success("Payment verification process completed successfully!");
   };
 
-  if(isLoading){
-    return (
-      <ListLoader comment={"Loading Page..."} />
-    )
-  }
+if (isLoading) {
+  return <ManagePaymentsSkeleton />;
+}
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300 max-w-[1600px] mx-auto">
@@ -521,7 +519,7 @@ const handleVerifyPayments = async (data) => {
           </div>
 
           {/* Quick Stats */}
-          <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-4 sm:p-5 text-white shadow-lg shadow-indigo-500/20">
+          {/* <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-4 sm:p-5 text-white shadow-lg shadow-indigo-500/20">
             <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
               <TrendingUp className="w-4 h-4" />
               This Month Overview
@@ -562,7 +560,7 @@ const handleVerifyPayments = async (data) => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Update Bank Address Action Card */}
           <button

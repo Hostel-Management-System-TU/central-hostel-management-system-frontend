@@ -1,11 +1,11 @@
 // components/payment/PaymentHistory.jsx
 import React from 'react'
-import { 
-  Eye, 
-  Pencil, 
-  Trash2, 
-  Clock, 
-  CheckCircle2, 
+import {
+  Eye,
+  Pencil,
+  Trash2,
+  Clock,
+  CheckCircle2,
   XCircle,
   Receipt,
   Calendar,
@@ -13,6 +13,7 @@ import {
   IndianRupee,
   Flag
 } from 'lucide-react'
+import ListLoader from "../loaders/ListLoader"
 
 const getStatusConfig = (status) => {
   switch (status) {
@@ -49,7 +50,7 @@ const getStatusConfig = (status) => {
   }
 }
 
-const PaymentHistory = ({ payments, onView, onEdit, onDelete }) => {
+const PaymentHistory = ({ payments, onView, onEdit, onDelete, isLoading }) => {
   return (
     <div>
       <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -72,82 +73,91 @@ const PaymentHistory = ({ payments, onView, onEdit, onDelete }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {payments?.map((payment, index) => {
-                const statusConfig = getStatusConfig(payment.verification_status)
-                const StatusIcon = statusConfig.icon
-                
-                return (
-                  <tr 
-                    key={payment.receipt_id} 
-                    className="hover:bg-slate-50/50 transition-colors group"
-                  >
-                    <td className="px-4 py-4 text-slate-500 font-medium">
-                      {String(index + 1).padStart(2, '0')}
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className="font-bold text-slate-800 flex items-center gap-1">
-                        <IndianRupee className="w-3.5 h-3.5" />
-                        {payment.amount.toLocaleString()}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-1.5 text-slate-600 font-mono text-xs bg-slate-100 px-2 py-1 rounded-lg w-fit">
-                        <CreditCard className="w-3 h-3 text-slate-400" />
-                        {payment.upi_transaction_no}
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-1.5 text-slate-600">
-                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                        <span>{payment.uploaded_on}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className={`
+              {isLoading ? (
+                <tr>
+                  <td colSpan={8} className="py-10">
+                    <div className="flex justify-center items-center">
+                      <ListLoader comment={"Loading history..."} />
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                payments?.map((payment, index) => {
+                  const statusConfig = getStatusConfig(payment.verification_status)
+                  const StatusIcon = statusConfig.icon
+
+                  return (
+                    <tr
+                      key={payment.receipt_id}
+                      className="hover:bg-slate-50/50 transition-colors group"
+                    >
+                      <td className="px-4 py-4 text-slate-500 font-medium">
+                        {String(index + 1).padStart(2, '0')}
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className="font-bold text-slate-800 flex items-center gap-1">
+                          <IndianRupee className="w-3.5 h-3.5" />
+                          {payment.amount.toLocaleString()}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-1.5 text-slate-600 font-mono text-xs bg-slate-100 px-2 py-1 rounded-lg w-fit">
+                          <CreditCard className="w-3 h-3 text-slate-400" />
+                          {payment.upi_transaction_no}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-1.5 text-slate-600">
+                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                          <span>{payment.uploaded_on}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className={`
                         inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border
                         ${statusConfig.color}
                       `}>
-                        <StatusIcon className="w-3.5 h-3.5" />
-                        {statusConfig.label}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          onClick={() => onView(payment.receipt_id)}
-                          className="p-2 rounded-lg hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-all"
-                          title="View Details"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        
-                        {(payment.verification_status === 'pending' || payment.verification_status === 'flagged') && (
+                          <StatusIcon className="w-3.5 h-3.5" />
+                          {statusConfig.label}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center justify-end gap-1">
                           <button
-                            onClick={() => onEdit(payment)}
-                            className="p-2 rounded-lg hover:bg-amber-50 text-slate-400 hover:text-amber-600 transition-all"
-                            title="Edit"
+                            onClick={() => onView(payment.receipt_id)}
+                            className="p-2 rounded-lg hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-all"
+                            title="View Details"
                           >
-                            <Pencil className="w-4 h-4" />
+                            <Eye className="w-4 h-4" />
                           </button>
-                        )}
-                        
-                        <button
-                          onClick={() => onDelete(payment)}
-                          className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-all"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
+
+                          {(payment.verification_status === 'pending' || payment.verification_status === 'flagged') && (
+                            <button
+                              onClick={() => onEdit(payment)}
+                              className="p-2 rounded-lg hover:bg-amber-50 text-slate-400 hover:text-amber-600 transition-all"
+                              title="Edit"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() => onDelete(payment)}
+                            className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-all"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                }))}
             </tbody>
           </table>
         </div>
-        
-        {payments.length === 0 && (
+
+        {(!isLoading && payments.length === 0 )&& (
           <div className="text-center py-12 text-slate-400">
             <Receipt className="w-12 h-12 mx-auto mb-3 text-slate-300" />
             <p className="text-sm font-medium">No payment history found</p>
@@ -157,10 +167,12 @@ const PaymentHistory = ({ payments, onView, onEdit, onDelete }) => {
 
       {/* Mobile Cards */}
       <div className="lg:hidden space-y-3">
-        {payments.map((payment, index) => {
+        {(isLoading)? (
+          <ListLoader comment={"Loading history..."} />
+        ):(payments.map((payment, index) => {
           const statusConfig = getStatusConfig(payment.verification_status)
           const StatusIcon = statusConfig.icon
-          
+
           return (
             <div
               key={payment.receipt_id}
@@ -211,7 +223,7 @@ const PaymentHistory = ({ payments, onView, onEdit, onDelete }) => {
                   <Eye className="w-3.5 h-3.5" />
                   Details
                 </button>
-                
+
                 {payment.verification_status === 'pending' && (
                   <button
                     onClick={() => onEdit(payment)}
@@ -221,7 +233,7 @@ const PaymentHistory = ({ payments, onView, onEdit, onDelete }) => {
                     Edit
                   </button>
                 )}
-                
+
                 <button
                   onClick={() => onDelete(payment)}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-red-50 text-red-700 text-xs font-semibold hover:bg-red-100 transition-colors"
@@ -232,9 +244,9 @@ const PaymentHistory = ({ payments, onView, onEdit, onDelete }) => {
               </div>
             </div>
           )
-        })}
-        
-        {payments.length === 0 && (
+        }))}
+
+        {(!isLoading && payments.length === 0) && (
           <div className="text-center py-12 text-slate-400 bg-white rounded-2xl border border-slate-200">
             <Receipt className="w-12 h-12 mx-auto mb-3 text-slate-300" />
             <p className="text-sm font-medium">No payment history found</p>

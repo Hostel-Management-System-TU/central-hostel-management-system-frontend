@@ -8,49 +8,55 @@ import PaymentDetails from '../components/payment/PaymentDetails'
 import { useAuth } from '@clerk/react'
 import { useUser } from '../context/user_context'
 import { FetchUserPaymentHistory, UploadPaymentDetails } from '../services/Payment/Payment'
+import Skeleton from "../components/loaders/Skeleton"
 
 const Payment = () => {
   const { getToken } = useAuth()
-  const {user_details} = useUser()
+  const { user_details } = useUser()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [payments, setPayments] = useState([])
   const [editingPayment, setEditingPayment] = useState(null)
   const [viewingPayment, setViewingPayment] = useState(null)
-  const [isSubmitting,setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Stats calculations
-  const totalPaid = payments? payments.reduce((sum, p) => sum + p.amount, 0): 0
-  const totalPayments = payments? payments.length : 0
+  const totalPaid = payments ? payments.reduce((sum, p) => sum + p.amount, 0) : 0
+  const totalPayments = payments ? payments.length : 0
 
   const fetchPaymentHistory = async () => {
+    setIsLoading(true)
     const token = await getToken()
     const res = await FetchUserPaymentHistory(token)
-    if (!res.success){
+    if (!res.success) {
+      setIsLoading(false)
       alert(res.error); // or toast
       return;
     }
-  setPayments(Array.isArray(res.data) ? res.data : [])  }
+    setPayments(Array.isArray(res.data) ? res.data : [])
+    setIsLoading(false)
+  }
 
   const handleAddPayment = async (paymentData) => {
     setIsSubmitting(true)
     const token = await getToken()
     const payload = new FormData()
 
-    payload.append("month",paymentData.month)
-    payload.append("year",paymentData.year)
-    payload.append("payment_type",Number(paymentData.paymentType))
-    payload.append("description",paymentData.description)
-    payload.append("hostel_id",Number(user_details.hostel_id))
-    payload.append("amount",paymentData.amount)
-    payload.append("upi_transaction_no",paymentData.upiTransactionNo)
-    payload.append("receipt",paymentData.receipt)
+    payload.append("month", paymentData.month)
+    payload.append("year", paymentData.year)
+    payload.append("payment_type", Number(paymentData.paymentType))
+    payload.append("description", paymentData.description)
+    payload.append("hostel_id", Number(user_details.hostel_id))
+    payload.append("amount", paymentData.amount)
+    payload.append("upi_transaction_no", paymentData.upiTransactionNo)
+    payload.append("receipt", paymentData.receipt)
     const result = await UploadPaymentDetails(token, payload);
-    
+
     if (!result.success) {
       setIsSubmitting(false)
-            alert(result.error);
-            return;
+      alert(result.error);
+      return;
     }
     await fetchPaymentHistory()
     setIsSubmitting(false)
@@ -84,18 +90,18 @@ const Payment = () => {
     setViewingPayment(null)
   }
 
-useEffect(() => {
-  const loadPayments = async () => {
-    try {
-      if (!getToken) return; // safety check
-      await fetchPaymentHistory();
-    } catch (err) {
-      console.error("Failed to fetch payments:", err);
-    }
-  };
+  useEffect(() => {
+    const loadPayments = async () => {
+      try {
+        if (!getToken) return; // safety check
+        await fetchPaymentHistory();
+      } catch (err) {
+        console.error("Failed to fetch payments:", err);
+      }
+    };
 
-  loadPayments();
-}, [getToken]);
+    loadPayments();
+  }, [getToken]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -108,7 +114,7 @@ useEffect(() => {
           </h1>
           <p className="text-sm text-slate-500 mt-1">Manage your hostel fee payments</p>
         </div>
-        
+
         <button
           onClick={() => setIsModalOpen(true)}
           className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
@@ -127,32 +133,65 @@ useEffect(() => {
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-100 to-violet-100 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50 group-hover:scale-110 transition-transform duration-300" />
           <div className="relative">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center mb-3 shadow-lg shadow-indigo-500/20">
-              <Receipt className="w-5 h-5 text-white" />
-            </div>
-            <p className="text-3xl font-bold text-slate-800">₹{totalPaid.toLocaleString()}</p>
-            <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">Total Paid</p>
+            {isLoading ? (
+              <>
+                <Skeleton className="w-10 h-10 rounded-xl mb-3" />
+                <Skeleton className="h-9 w-28 mb-2" />
+                <Skeleton className="h-3 w-24" />
+              </>
+            ) : (
+              <>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center mb-3 shadow-lg shadow-indigo-500/20">
+                  <Receipt className="w-5 h-5 text-white" />
+                </div>
+
+                <p className="text-3xl font-bold text-slate-800">
+                  ₹{totalPaid.toLocaleString()}
+                </p>
+
+                <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">
+                  Total Paid
+                </p>
+              </>
+            )}
           </div>
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50 group-hover:scale-110 transition-transform duration-300" />
           <div className="relative">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-3 shadow-lg shadow-emerald-500/20">
-              <CreditCard className="w-5 h-5 text-white" />
-            </div>
-            <p className="text-3xl font-bold text-slate-800">{totalPayments}</p>
-            <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">No. of Payments</p>
+            {isLoading ? (
+              <>
+                <Skeleton className="w-10 h-10 rounded-xl mb-3" />
+                <Skeleton className="h-9 w-20 mb-2" />
+                <Skeleton className="h-3 w-32" />
+              </>
+            ) : (
+              <>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-3 shadow-lg shadow-emerald-500/20">
+                  <CreditCard className="w-5 h-5 text-white" />
+                </div>
+
+                <p className="text-3xl font-bold text-slate-800">
+                  {totalPayments}
+                </p>
+
+                <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">
+                  No. of Payments
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>
 
       {/* History Section */}
-      <PaymentHistory 
-        payments={payments} 
+      <PaymentHistory
+        payments={payments}
         onView={handleView}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        isLoading={isLoading}
       />
 
       {/* Add/Edit Modal */}
@@ -162,8 +201,8 @@ useEffect(() => {
         title={editingPayment ? 'Edit Payment' : 'New Payment'}
         maxWidth="max-w-md"
       >
-        <PaymentForm 
-          onSubmit={handleAddPayment} 
+        <PaymentForm
+          onSubmit={handleAddPayment}
           onCancel={closeModal}
           isSubmitting={isSubmitting}
         />
@@ -176,8 +215,8 @@ useEffect(() => {
         title="Payment Details"
         maxWidth="max-w-lg"
       >
-        <PaymentDetails 
-          payment_id={viewingPayment} 
+        <PaymentDetails
+          payment_id={viewingPayment}
         />
       </Modal>
     </div>

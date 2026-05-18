@@ -8,6 +8,7 @@ import ReportDetails from '../components/report/ReportDetails'
 import { useAuth } from '@clerk/react'
 import { useUser } from '../context/user_context'
 import { FetchUserReports, RegisterReport } from '../services/Report/Report'
+import Skeleton from "../components/loaders/Skeleton"
 
 const Report = () => {
   const { getToken } = useAuth()
@@ -25,13 +26,16 @@ const Report = () => {
   const resolvedCount = reports?.filter(r => r.report_status === 'resolved').length || 0
 
   const fetchReports = async () => {
+    setIsLoading(true)
     const token = await getToken()
     const res = await FetchUserReports(token)
     if (!res.success) {
+      setIsLoading(false)
       alert(res.error)
       return
     }
     setReports(Array.isArray(res.data) ? res.data : [])
+    setIsLoading(false)
   }
 
   const handleSubmitReport = async (reportData) => {
@@ -59,7 +63,7 @@ const Report = () => {
 
   const handleDelete = async (report) => {
     // if (!window.confirm('Are you sure you want to delete this report?')) return
-    
+
     // const token = await getToken()
     // const res = await DeleteReport(token, report.id)
     // if (!res.success) {
@@ -116,39 +120,92 @@ const Report = () => {
           Report Issue
         </button>
       </div>
-
       {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-3">
+        {/* Total Reports */}
         <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-rose-100 to-red-100 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50 group-hover:scale-110 transition-transform duration-300" />
+
           <div className="relative">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-red-500 flex items-center justify-center mb-2 shadow-lg shadow-rose-500/20">
-              <ClipboardList className="w-4 h-4 text-white" />
-            </div>
-            <p className="text-2xl font-bold text-slate-800">{totalReports}</p>
-            <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">Total</p>
+            {isLoading ? (
+              <>
+                <Skeleton className="w-9 h-9 rounded-xl mb-2" />
+                <Skeleton className="h-7 w-14 mb-2" />
+                <Skeleton className="h-3 w-16" />
+              </>
+            ) : (
+              <>
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-red-500 flex items-center justify-center mb-2 shadow-lg shadow-rose-500/20">
+                  <ClipboardList className="w-4 h-4 text-white" />
+                </div>
+
+                <p className="text-2xl font-bold text-slate-800">
+                  {totalReports}
+                </p>
+
+                <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">
+                  Total
+                </p>
+              </>
+            )}
           </div>
         </div>
 
+        {/* Pending */}
         <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50 group-hover:scale-110 transition-transform duration-300" />
+
           <div className="relative">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-2 shadow-lg shadow-amber-500/20">
-              <AlertCircle className="w-4 h-4 text-white" />
-            </div>
-            <p className="text-2xl font-bold text-slate-800">{pendingCount}</p>
-            <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">Pending</p>
+            {isLoading ? (
+              <>
+                <Skeleton className="w-9 h-9 rounded-xl mb-2" />
+                <Skeleton className="h-7 w-14 mb-2" />
+                <Skeleton className="h-3 w-20" />
+              </>
+            ) : (
+              <>
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-2 shadow-lg shadow-amber-500/20">
+                  <AlertCircle className="w-4 h-4 text-white" />
+                </div>
+
+                <p className="text-2xl font-bold text-slate-800">
+                  {pendingCount}
+                </p>
+
+                <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">
+                  Pending
+                </p>
+              </>
+            )}
           </div>
         </div>
 
+        {/* Resolved */}
         <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50 group-hover:scale-110 transition-transform duration-300" />
+
           <div className="relative">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-2 shadow-lg shadow-emerald-500/20">
-              <CheckCircle2 className="w-4 h-4 text-white" />
-            </div>
-            <p className="text-2xl font-bold text-slate-800">{resolvedCount}</p>
-            <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">Resolved</p>
+            {isLoading ? (
+              <>
+                <Skeleton className="w-9 h-9 rounded-xl mb-2" />
+                <Skeleton className="h-7 w-14 mb-2" />
+                <Skeleton className="h-3 w-20" />
+              </>
+            ) : (
+              <>
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-2 shadow-lg shadow-emerald-500/20">
+                  <CheckCircle2 className="w-4 h-4 text-white" />
+                </div>
+
+                <p className="text-2xl font-bold text-slate-800">
+                  {resolvedCount}
+                </p>
+
+                <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">
+                  Resolved
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -158,6 +215,7 @@ const Report = () => {
         reports={reports}
         onView={handleView}
         onDelete={handleDelete}
+        isLoading={isLoading}
       />
 
       {/* Report Issue Modal */}

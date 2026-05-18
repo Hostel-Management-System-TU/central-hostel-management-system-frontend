@@ -1,6 +1,7 @@
 // components/report/ReportHistory.jsx
 import React from 'react'
 import { Eye, Trash2, AlertCircle, CheckCircle2, XCircle, Clock } from 'lucide-react'
+import ListLoader from '../loaders/ListLoader'
 
 const REPORT_TYPE_MAP = {
   1: 'Electricity',
@@ -40,7 +41,7 @@ const STATUS_CONFIG = {
   },
 }
 
-const ReportHistory = ({ reports, onView, onDelete }) => {
+const ReportHistory = ({ reports, onView, onDelete, isLoading }) => {
   const getStatusBadge = (status) => {
     const config = STATUS_CONFIG[status] || STATUS_CONFIG.pending
     const Icon = config.icon
@@ -73,7 +74,15 @@ const ReportHistory = ({ reports, onView, onDelete }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {reports.length === 0 ? (
+            {isLoading ? (
+                <tr>
+                  <td colSpan={8} className="py-10">
+                    <div className="flex justify-center items-center">
+                      <ListLoader comment={"Loading history..."} />
+                    </div>
+                  </td>
+                </tr>
+              ):(reports.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-5 py-12 text-center">
                   <div className="flex flex-col items-center gap-3">
@@ -122,14 +131,16 @@ const ReportHistory = ({ reports, onView, onDelete }) => {
                   </td>
                 </tr>
               ))
-            )}
+            ))}
           </tbody>
         </table>
       </div>
 
       {/* Mobile Cards */}
       <div className="md:hidden divide-y divide-slate-100">
-        {reports.length === 0 ? (
+        {isLoading?(
+          <ListLoader comment={"Loading history..."} />
+        ):(reports.length === 0 ? (
           <div className="px-5 py-12 text-center">
             <div className="flex flex-col items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
@@ -176,7 +187,7 @@ const ReportHistory = ({ reports, onView, onDelete }) => {
               </div>
             </div>
           ))
-        )}
+        ))}
       </div>
     </div>
   )

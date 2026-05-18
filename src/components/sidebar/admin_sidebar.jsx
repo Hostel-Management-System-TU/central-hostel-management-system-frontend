@@ -22,9 +22,9 @@ import { useUser } from "../../context/user_context";
 const navItems = [
   { path: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/admin/payments", label: "Payment Management", icon: CreditCard },
-  { path: "/admin/payments/defaulters", label: "Defaulters", icon: AlertTriangle }, // 👈 added
+  { path: "/admin/payments/defaulters", label: "Defaulters", icon: AlertTriangle },
   { path: "/admin/reports", label: "Report Management", icon: FileBarChart },
-  { path: "/admin/settings", label: "Settings", icon: Settings },
+  // { path: "/admin/settings", label: "Settings", icon: Settings },
   { path: "/dashboard", label: "Back", icon: LogOut }
 ];
 
@@ -82,7 +82,7 @@ const AdminSidebar = ({ isMobileOpen, onClose }) => {
             <div className="mt-4 flex items-center gap-2">
               <div className="h-px flex-1 bg-white/20" />
               <span className="text-white/60 text-xs font-semibold tracking-wider uppercase">
-                {user_details?.HostelAbvr || "Hostel"}
+                {user_details?.hostel_abbvr || "Hostel"}
               </span>
               <div className="h-px flex-1 bg-white/20" />
             </div>
