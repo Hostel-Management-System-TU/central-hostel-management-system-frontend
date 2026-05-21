@@ -28,7 +28,7 @@ const Register = () => {
     phone: "",
     roomNo: "",
     rollNo: "",
-    hostel: "",
+    hostel: 0,
   });
 
   useEffect(() => {
