@@ -1,5 +1,5 @@
-// export const baseApi = "http://127.0.0.1:7860/api/v1"
-export const baseApi = "https://chms78-chms-api.hf.space/api/v1"
+export const baseApi = "http://127.0.0.1:7860/api/v1"
+// export const baseApi = "https://chms78-chms-api.hf.space/api/v1"
 
 export const R2DevURL = "https://pub-f2cb6691fe21423a9c423ad220580d86.r2.dev/"
 

@@ -58,7 +58,7 @@ const Register = () => {
     if (!res.success) {
       toast.error("Failed to fetch Hostels")
     }
-    setHostels(res.data)
+    setHostels(Array.isArray(res.data) ? res.data : [])
   }
 
   const validate = () => {
