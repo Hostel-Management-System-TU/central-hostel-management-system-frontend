@@ -1,4 +1,4 @@
-export const baseApi = import.meta.env.VITE_BASE_URL || "http://localhost:7860"
+export const baseApi = import.meta.env.VITE_BASE_URL || "http://localhost:7860/api/v1"
 export const R2DevURL = import.meta.env.VITE_R2_URL || ""
 
 

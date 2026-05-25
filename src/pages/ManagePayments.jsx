@@ -80,92 +80,92 @@ const ManagePayments = () => {
   });
   const [categorizedStats, setCategorizedStats] = useState();
 
-const fetchAnalytics = async () => {
-  setIsLoading(true)
-  if (!user_details?.hostel_id) return;
+  const fetchAnalytics = async () => {
+    setIsLoading(true)
+    if (!user_details?.hostel_id) return;
 
-  const token = await getToken();
+    const token = await getToken();
 
-  const res = await FetchAdminPaymentAnalytics(
-    token,
-    user_details.hostel_id
-  );
+    const res = await FetchAdminPaymentAnalytics(
+      token,
+      user_details.hostel_id
+    );
 
-  if (!res.success) {
+    if (!res.success) {
+      setIsLoading(false)
+      alert(res.error);
+      return;
+    }
     setIsLoading(false)
-    alert(res.error);
-    return;
-  }
-  setIsLoading(false)
 
-  setVerificationStats({
-    approved: res.data.approved_count,
-    pending: res.data.pending_count,
-    rejected: res.data.rejected_count,
-    flagged: res.data.flagged_count,
-    total: res.data.total_transactions,
-  });
-
-  setCategorizedStats({
-    mess_fee: {
-      id: 1,
-      label: "Mess Fee",
-      transactions: res.data.payment_type_1_count,
-      amount: res.data.payment_type_1_total,
-    },
-    additional_mess_fee: {
-      id: 2,
-      label: "Additional Mess Fee",
-      transactions: res.data.payment_type_2_count,
-      amount: res.data.payment_type_2_total,
-    },
-    fines: {
-      id: 3,
-      label: "Fines",
-      transactions: res.data.payment_type_3_count,
-      amount: res.data.payment_type_3_total,
-    },
-  });
-  setTotals({
-    transactions: res.data.total_transactions,
-    amount: res.data.total_amount,
-  });
-};
-
-useEffect(() => {
-  const duration = 1000;
-  const steps = 30;
-  const interval = duration / steps;
-
-  let step = 0;
-
-  const timer = setInterval(() => {
-    step++;
-
-    const progress = step / steps;
-
-    setAnimatedStats({
-      approved: Math.round(verificationStats.approved * progress),
-      pending: Math.round(verificationStats.pending * progress),
-      rejected: Math.round(verificationStats.rejected * progress),
-      flagged: Math.round(verificationStats.flagged * progress),
+    setVerificationStats({
+      approved: res.data.approved_count,
+      pending: res.data.pending_count,
+      rejected: res.data.rejected_count,
+      flagged: res.data.flagged_count,
+      total: res.data.total_transactions,
     });
 
-    if (step >= steps) {
-      clearInterval(timer);
+    setCategorizedStats({
+      mess_fee: {
+        id: 1,
+        label: "Mess Fee",
+        transactions: res.data.payment_type_1_count,
+        amount: res.data.payment_type_1_total,
+      },
+      additional_mess_fee: {
+        id: 2,
+        label: "Additional Mess Fee",
+        transactions: res.data.payment_type_2_count,
+        amount: res.data.payment_type_2_total,
+      },
+      fines: {
+        id: 3,
+        label: "Fines",
+        transactions: res.data.payment_type_3_count,
+        amount: res.data.payment_type_3_total,
+      },
+    });
+    setTotals({
+      transactions: res.data.total_transactions,
+      amount: res.data.total_amount,
+    });
+  };
+
+  useEffect(() => {
+    const duration = 1000;
+    const steps = 30;
+    const interval = duration / steps;
+
+    let step = 0;
+
+    const timer = setInterval(() => {
+      step++;
+
+      const progress = step / steps;
+
+      setAnimatedStats({
+        approved: Math.round(verificationStats.approved * progress),
+        pending: Math.round(verificationStats.pending * progress),
+        rejected: Math.round(verificationStats.rejected * progress),
+        flagged: Math.round(verificationStats.flagged * progress),
+      });
+
+      if (step >= steps) {
+        clearInterval(timer);
+      }
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, [verificationStats]);
+
+  useEffect(() => {
+    if (user_details?.hostel_id) {
+      fetchAnalytics();
     }
-  }, interval);
+  }, [user_details]);
 
-  return () => clearInterval(timer);
-}, [verificationStats]);
-
-useEffect(() => {
-  if (user_details?.hostel_id) {
-    fetchAnalytics();
-  }
-}, [user_details]);
-
-const handleVerifyPayments = async (data) => {
+  const handleVerifyPayments = async (data) => {
     const token = await getToken();
     setIsVerifying(true);
 
@@ -184,9 +184,9 @@ const handleVerifyPayments = async (data) => {
     toast.success("Payment verification process completed successfully!");
   };
 
-if (isLoading) {
-  return <ManagePaymentsSkeleton />;
-}
+  if (isLoading) {
+    return <ManagePaymentsSkeleton />;
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300 max-w-[1600px] mx-auto">
@@ -216,17 +216,15 @@ if (isLoading) {
           </button>
 
           <button
-            onClick={() => setVerifyModalOpen(true)}
             className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
               bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-semibold
               hover:from-indigo-700 hover:to-violet-700 active:scale-[0.98]
               shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40
               transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {/* <RefreshCw
-              className={`w-4 h-4 ${isVerifying ? "animate-spin" : ""}`}
-            /> */}
-            Start Verify Worker
+            <Settings className="w-5 h-5 text-white" />
+
+            Update Bank Address
           </button>
         </div>
       </div>
@@ -563,7 +561,7 @@ if (isLoading) {
           </div> */}
 
           {/* Update Bank Address Action Card */}
-          <button
+          {/* <button
             onClick={() => setIsBankModalOpen(true)}
             className="w-full flex items-center gap-3 p-4 rounded-2xl bg-white border border-slate-200 
               shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-200 group text-left"
@@ -586,7 +584,7 @@ if (isLoading) {
               className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 
               group-hover:translate-x-0.5 transition-all"
             />
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -606,10 +604,10 @@ if (isLoading) {
         maxWidth="max-w-md"
       >
         <Verify
-        onSubmit={handleVerifyPayments}
-        onFinished={() => setVerifyModalOpen(false)}
-        isVerifying={isVerifying}
-         />
+          onSubmit={handleVerifyPayments}
+          onFinished={() => setVerifyModalOpen(false)}
+          isVerifying={isVerifying}
+        />
       </Modal>
     </div>
   );
