@@ -306,7 +306,7 @@ const ManageReports = () => {
                                             className="inline-flex items-center px-2.5 py-1 rounded-lg 
                         bg-rose-50 text-rose-700 text-xs font-medium border border-rose-100"
                                         >
-                                            {report.RoomNumber}
+                                            {report.room_no}
                                         </span>
                                         
                                         <span className="text-xs text-slate-400 ml-auto">

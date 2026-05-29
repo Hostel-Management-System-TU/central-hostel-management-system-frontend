@@ -9,6 +9,7 @@ import { useAuth } from '@clerk/react'
 import { useUser } from '../context/user_context'
 import { FetchUserReports, RegisterReport } from '../services/Report/Report'
 import Skeleton from "../components/loaders/Skeleton"
+import { toast } from 'sonner'
 
 const Report = () => {
   const { getToken } = useAuth()
@@ -53,11 +54,12 @@ const Report = () => {
     const result = await RegisterReport(token, payload)
     if (!result.success) {
       setIsSubmitting(false)
-      alert(result.error)
+      toast.error(result.error)
       return
     }
     await fetchReports()
     setIsSubmitting(false)
+    toast.success("Successfully Uploaded!")
     setIsModalOpen(false)
   }
 

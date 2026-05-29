@@ -71,7 +71,7 @@ export const RegisterReport = async (token, payload) => {
       return {
         success: false,
         status: res.status,
-        error: errorData.message || "Error in uploading report",
+        error: errorData.error || "Error in uploading report",
       };
     }
 
